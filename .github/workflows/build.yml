@@ -8,11 +8,18 @@ on:
   workflow_dispatch:
   
 jobs:
-  compilation-macos:
-
-    runs-on: macos-latest
+  compilation:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        swift: ["5.10.1"]
+    runs-on: ${{ matrix.os }}
 
     steps:
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ matrix.swift }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Update brew
