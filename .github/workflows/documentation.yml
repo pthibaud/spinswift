@@ -34,11 +34,11 @@ jobs:
         run: swift package plugin generate-documentation --help
       - name: Generate Documentation
         run: swift package --allow-writing-to-directory ./docs \
-              generate-documentation \
+              package generate-documentation \
               --target spinswift \
+              --disable-indexing \
               --hosting-base-path spinswift \
               --transform-for-static-hosting \
-              --disable-indexing \
               --output-path ./docs
       - name: Setup Pages
         id: pages
