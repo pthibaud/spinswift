@@ -30,13 +30,16 @@ jobs:
           fetch-depth: 0
       - name: Verify swift version
         run: swift --version
-      - name: Verify swift documentation package
+      - name: Verify swift documentation package presence
         run: swift package plugin generate-documentation --help
       - name: Generate Documentation
-        run: swift package generate-documentation \
+        run: swift package --allow-writing-to-directory ./docs \
+              generate-documentation \
+              --target spinswift \
+              --hosting-base-path spinswift \
               --transform-for-static-hosting \
-              --hosting-base-path ${{ github.event.repository.name }} \
-              --output-path "./docs"
+              --disable-indexing \
+              --output-path ./docs
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
