@@ -8,23 +8,39 @@ on:
   workflow_dispatch:
   
 jobs:
-  preparation:
-    name: Prepare environment
-    runs-on: macos-latest
-    steps:
-      - name: Update brew
-        run:  brew update && brew install gsl
 
-  compilation:
+  compilation-linux:
     name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         swift: ["5.10.1"]
     runs-on: ${{ matrix.os }}
-    needs: preparation
 
     steps:
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ matrix.swift }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify swift version
+        run: swift --version
+      - name: Build
+        run: swift build
+      - name: Run tests
+        run: swift test
+
+  compilation-macos:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        swift: ["5.10.1"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Preparation
+        run: brew install gsl
       - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
