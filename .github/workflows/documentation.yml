@@ -33,8 +33,7 @@ jobs:
       - name: Verify swift documentation package
         run: swift package plugin generate-documentation --help
       - name: Generate Documentation
-        run: swift package --allow-writing-to-directory "./docs" \
-              generate-documentation \
+        run: swift package generate-documentation \
               --target ${{ github.event.repository.name }} \
               --transform-for-static-hosting \
               --hosting-base-path ${{ github.event.repository.name }} \
