@@ -29,7 +29,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Generate Documentation
-        run: ./build-docc.sh
+        run: swift package --allow-writing-to-directory docs \
+              generate-documentation --target ${{ github.event.repository.name }} \
+              --disable-indexing \
+              --transform-for-static-hosting \
+              --hosting-base-path ${{ github.event.repository.name }} \
+              --output-path docs
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
