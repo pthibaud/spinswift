@@ -7,6 +7,7 @@ import Foundation
 /// The purpose of this class is to integrate a collection of particles. 
 /// - Author: Pascal Thibaudeau
 /// - Date: 03/10/2023
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Version: 0.1
 
 class Integrate: Codable {

@@ -7,6 +7,7 @@ import Foundation
 /// The purpose of these methods is to manage data into files
 /// - Author: Pascal Thibaudeau
 /// - Date: 03/10/2023
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Version: 0.1
 
 func SaveOnFile(data: String, fileName: String) {

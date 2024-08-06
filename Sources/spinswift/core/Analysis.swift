@@ -3,6 +3,12 @@ This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 Inte
 */
 import Foundation
 
+/// A class for getting physical properties from atomic spin states
+/// 
+/// - Author: Pascal Thibaudeau
+/// - Date: 14/04/2024
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
+/// - Version: 0.1
 class Analysis {
 
     var atoms : [Atom] 
@@ -11,6 +17,7 @@ class Analysis {
         self.atoms = atoms!
     }
 
+    /// Return the total energy of a magnetic system
     func GetEnergy() -> Double {
         var e : Double = 0
         atoms.forEach {
@@ -19,6 +26,7 @@ class Analysis {
         return e
     }
 
+    /// Return the average magnetization vector of a magnetic system
     func GetMagnetization() -> Vector3 {
         var m : Vector3 = Vector3()
         var g : Double = 0
@@ -31,6 +39,7 @@ class Analysis {
         return (1.0/g)*m
     }
 
+    /// Return the total torque of a magnetic system
     func GetTorque() -> Vector3 {
         var t: Vector3 = Vector3()
         atoms.forEach {
@@ -39,6 +48,7 @@ class Analysis {
         return t
     }
 
+    /// Return the spin microcanonic temperature 
     func GetTemperature(coefficient:Double? = 2.0) -> Double {
         let e: Double = self.GetEnergy()
         let t: Vector3 = self.GetTorque()

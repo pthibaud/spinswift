@@ -7,11 +7,13 @@ import Foundation
 ///  
 /// - Author: Pascal Thibaudeau
 /// - Date: 14/04/2023
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Version: 0.1
 
 // a very small number
 public let ε: Double = 1e-18
 
+/// A structure for getting the physical constants
 public struct PhysicalConstants : Codable {
   public let value : Double
   public let description : String
@@ -31,12 +33,17 @@ public struct PhysicalConstants : Codable {
 }
 /// The elementary charge; e=1.602176634e-19 C
 public let elementary_charge: PhysicalConstants = PhysicalConstants(value: 1.602176634e-19, description: "The elementary charge", units: "[A s]")
+/// The Bohr magneton
 public let μ_B: PhysicalConstants = PhysicalConstants(value: 0.057883817555, description: "The Bohr Magneton", units: "[meV/T]")
+/// The permeability of empty space
 public let μ_0: PhysicalConstants = PhysicalConstants(value: 2.0133545*1e-28, description: "The vacuum permeability", units: "[T^2 m^3 / meV]")
+/// The Boltzmann constant
 public let k_B: PhysicalConstants = PhysicalConstants(value: 0.08617330350,  description: "The Boltzmann constant", units: "[meV/K]")
+/// The reduced Planck constant
 public let ℏ: PhysicalConstants = PhysicalConstants(value: 0.6582119514, description: "The Planck constant", units: "[meV*ps/rad]")
-
+/// The Landé factor for the electron
 public let g_e: PhysicalConstants = PhysicalConstants(value: 2.00231930436182, description: "The electron (Landé) g-factor", units: "[unitless]")
+/// The gyromagnetic ratio of an electron
 public let γ: PhysicalConstants = PhysicalConstants(value: 0.1760859644, description: "The gyromagnetic ratio of electron", units: "[rad/(ps*T)]")
 
 public typealias ConversionFactors = PhysicalConstants

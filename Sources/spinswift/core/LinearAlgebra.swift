@@ -6,13 +6,16 @@ import Foundation
 /// 
 /// The purpose of this class is to interact with tridimensional vectors. 
 /// - Author: Pascal Thibaudeau
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Date: 14/04/2023
 /// - Version: 0.1
+
 //infix operator + : AdditionPrecedence
 infix operator ×
 infix operator °
 
 public class Vector3 : Codable {
+  /// the Cartesian coordinates
   var x,y,z: Double
 
   public init(x: Double? = 0 , y: Double? = 0, z: Double? = 0, direction: String? = nil, normalize: Bool? = false) {
@@ -44,12 +47,12 @@ public class Vector3 : Codable {
     self.z = z
   }
   
-  // Compute the norm of a 3D vector
+  /// Compute the norm of a 3D vector
   func Norm() -> Double {
     return ((x*x) + (y*y) + (z*z)).squareRoot()
   }
 
-  // Normalize all the components of a 3D vector
+  /// Normalize all the components of a 3D vector
   func Normalize() {
       let norm: Double = self.Norm()
       if norm != 0 {
@@ -63,20 +66,21 @@ public class Vector3 : Codable {
     print("<\(self.x),\(self.y),\(self.z)>")
   }
 
+  /// Add two 3D vectors and return a 3D vector
   public static func + (a: Vector3, b: Vector3) -> Vector3 {
     return Vector3(x: (a.x)+(b.x), y: (a.y)+(b.y), z:(a.z)+(b.z))
   }
-
+  /// Subtract two 3D vectors and return a 3D vector
   public static func - (a: Vector3, b: Vector3) -> Vector3 {
     return Vector3(x: (a.x)-(b.x), y: (a.y)-(b.y), z:(a.z)-(b.z))
   }
-
+  /// Add two 3D vectors and return the result on the first for these vectors
   public static func += (a: inout Vector3, b: Vector3) {
     var c: Vector3 = Vector3()
     c = a + b
     a = c
   }
-
+  /// Subtract two 3D vectors and return the result on the first for these vectors
   public static func -= (a: inout Vector3, b: Vector3) {
     var c: Vector3 = Vector3()
     c = a - b
@@ -98,7 +102,7 @@ public class Vector3 : Codable {
     return Vector3(x: a*(b.x), y: a*(b.y), z: a*(b.z))
   }
 
-  /// Implementation of Equatable Vector3
+  /// Implementation of Equatable of two 3D vectors
   public static func == (a: Vector3, b: Vector3) -> Bool {
     return (a.x == b.x) && (a.y == b.y) && (a.z == b.z)
   }
@@ -108,10 +112,11 @@ public class Vector3 : Codable {
         let data: Data = try JSONEncoder().encode(self)
         let jsonString: String? = String(data:data, encoding:.utf8) 
         return jsonString!
-    } 
+    }
 }
 
 /// Compute the Euclidean distance between two 3D vectors
-  func Distance(_ a: Vector3, _ b: Vector3) -> Double {
+///
+public func Distance(_ a: Vector3, _ b: Vector3) -> Double {
     return ((a-b)°(a-b)).squareRoot()
-  }
+}

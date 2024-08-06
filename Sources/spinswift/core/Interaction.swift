@@ -8,6 +8,7 @@ import Foundation
 /// Interactions act between atoms. 
 /// - Author: Pascal Thibaudeau
 /// - Date: 14/04/2023
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Version: 0.1
 class Interaction : Codable {
     

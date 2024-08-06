@@ -8,6 +8,7 @@ import Foundation
 /// An atomic system is a collection of atoms and relationships with them. 
 /// - Author: Pascal Thibaudeau
 /// - Date: 14/04/2023
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Version: 0.1
 class Atom : Codable {
     /// Name of the atomic species

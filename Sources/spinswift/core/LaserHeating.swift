@@ -3,11 +3,12 @@ This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 Inte
 */
 import Foundation
 
-/// A class for managing laser heating
+/// A class for managing a laser heating
 /// 
 /// Laser heating interactions and atomic effects. 
 /// - Author: Pascal Thibaudeau
 /// - Date: 30/07/2025
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Version: 0.1
 
 class LaserExcitation : Codable {
@@ -162,13 +163,17 @@ class LaserExcitation : Codable {
         return rate
     }
 
+    /// Integration method of the 3 temperatures model for a Gaussian pulse
     func AdvanceTemperaturesGaussian(method:String, Δt : Double)  {
           switch method.lowercased() {
+            /// Euler or Runge-Kutta of order 1
             case "euler", "rk1":
                 self.temperatures += Δt*LHS(time:self.time,temperatures:self.temperatures)
+            /// Runge-Kutta of order 2
             case "rk2":
                 let k1: Temperatures = self.temperatures + 0.5*Δt*LHS(time:self.time,temperatures:self.temperatures)
                 self.temperatures += Δt*LHS(time:self.time+0.5*Δt,temperatures:k1)
+            /// Runge-Kutta of order 4
             case "rk4":
                 let k1: Temperatures = LHS(time:self.time,temperatures:self.temperatures)
                 let k2: Temperatures = LHS(time:self.time+0.5*Δt,temperatures:self.temperatures+0.5*Δt*k1)
@@ -179,6 +184,7 @@ class LaserExcitation : Codable {
             }   
     }
 
+    /// Estimation of the integration timestep needed for a given constant quality factor 0<Q<1
     func EstimateTimestep(factor:Double) -> Double {
         let temp = LHS(time:self.time,temperatures:self.temperatures)
         let array = [abs(temp.Electron),abs(temp.Phonon),abs(temp.Spin)]

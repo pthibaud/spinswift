@@ -7,6 +7,7 @@ import Foundation
 /// 
 /// A periodic table provides a collection of atomic properties. 
 /// - Author: Pascal Thibaudeau
+/// - Copyright: [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/)
 /// - Date: 14/04/2023
 /// - Version: 0.1
 
