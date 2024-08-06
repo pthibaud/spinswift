@@ -116,7 +116,6 @@ public class Vector3 : Codable {
 }
 
 /// Compute the Euclidean distance between two 3D vectors
-///
 public func Distance(_ a: Vector3, _ b: Vector3) -> Double {
     return ((a-b)°(a-b)).squareRoot()
 }
