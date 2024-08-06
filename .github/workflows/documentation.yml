@@ -34,7 +34,6 @@ jobs:
         run: swift package plugin generate-documentation --help
       - name: Generate Documentation
         run: swift package generate-documentation \
-              --target ${{ github.event.repository.name }} \
               --transform-for-static-hosting \
               --hosting-base-path ${{ github.event.repository.name }} \
               --output-path "./docs"
