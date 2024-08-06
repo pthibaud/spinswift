@@ -8,6 +8,13 @@ on:
   workflow_dispatch:
   
 jobs:
+  preparation:
+    name: Prepare environment
+    runs-on: macos-latest
+    steps:
+      - name: Update brew
+        run:  brew update && brew install gsl
+
   compilation:
     name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     strategy:
@@ -20,22 +27,6 @@ jobs:
       - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Update brew
-        run:  brew update && brew install gsl
-      - name: Verify swift version
-        run: swift --version
-      - name: Build
-        run: swift build
-      - name: Run tests
-        run: swift test
-  
-  compilation-linux:
-
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Verify swift version
