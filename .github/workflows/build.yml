@@ -22,7 +22,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         swift: ["5.10.1"]
     runs-on: ${{ matrix.os }}
-    needs: build
+    needs: preparation
 
     steps:
       - uses: swift-actions/setup-swift@v2
