@@ -12,7 +12,10 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update brew
+        run:  brew update && brew install gsl
       - name: Build
         run: swift build
       - name: Run tests
