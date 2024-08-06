@@ -1,4 +1,4 @@
-name: build
+name: compilation
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  build-macos:
+  compilation-macos:
 
     runs-on: macos-latest
 
@@ -22,7 +22,7 @@ jobs:
       - name: Run tests
         run: swift test
   
-  build-linux:
+  compilation-linux:
 
     runs-on: ubuntu-latest
 
