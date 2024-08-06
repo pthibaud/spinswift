@@ -34,7 +34,7 @@ jobs:
         run: swift package plugin generate-documentation --help
       - name: Generate Documentation
         run: swift package --allow-writing-to-directory ./docs \
-              package generate-documentation \
+              plugin generate-documentation \
               --target spinswift \
               --disable-indexing \
               --hosting-base-path spinswift \
