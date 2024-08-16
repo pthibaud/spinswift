@@ -63,8 +63,8 @@ class Integrate: Codable {
 
             for a: Atom in h.atoms {
                content += " "+String(a.spin.x)+" "+String(a.spin.y)+" "+String(a.spin.z)
-               content += "\n"
             }
+            content += "\n"
 
             expLs(Δt: Δt, by: "euler")
 
@@ -85,8 +85,8 @@ class Integrate: Codable {
 
             for a: Atom in h.atoms {
                content += " "+String(a.spin.x)+" "+String(a.spin.y)+" "+String(a.spin.z)
-               content += "\n"
             }
+            content += "\n"
 
             expLs(Δt: Δt, by: "symplectic")
 

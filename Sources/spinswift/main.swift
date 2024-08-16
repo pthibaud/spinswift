@@ -29,7 +29,21 @@ var h: Interaction = Interaction([MTJ[0],MTJ[2]])
 //.exchangeField(typeI:1,typeJ:1,value:1.0,Rcut:3)
 .dampening(0.1)
 
-Integrate(h).evolve(10000, Δt: 1.0, by: "euler", file: "test")
+//print(try! h.atoms[0].jsonify())
+Integrate(h).evolve(60000, Δt: 1.0, by: "euler", file: "euler")
+
+MTJ[0].spin = Vector3(direction:"+x")
+MTJ[2].spin = Vector3(direction: "x")
+h.update()
+//print(try! h.atoms[0].jsonify())
+
+Integrate(h).evolve(3000, Δt: 2.0, by: "expLS", file: "expls")
+
+MTJ[0].spin = Vector3(direction:"+x")
+MTJ[2].spin = Vector3(direction: "x")
+h.update()
+//print(try! h.atoms[0].jsonify())
+Integrate(h).evolve(3000, Δt: 2.0, by: "symplectic", file: "symplectic")
 
 //print(Analysis(h.atoms).temperature())
 
