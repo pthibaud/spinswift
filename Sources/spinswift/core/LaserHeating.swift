@@ -124,12 +124,12 @@ class LaserExcitation : Codable {
     func power(time: Double) -> Double {
         var power: Double = Double()
 
-        switch self.pulse.form.lowercased() {
+        switch pulse.form.lowercased() {
             case "gaussian":
-                let Φ: Double = self.pulse.fluence
-                let σ: Double = self.pulse.duration
-                let δ: Double = self.pulse.delay
-                let ζ: Double = self.ttm.effectiveThickness
+                let Φ: Double = pulse.fluence
+                let σ: Double = pulse.duration
+                let δ: Double = pulse.delay
+                let ζ: Double = ttm.effectiveThickness
                 power = (Φ/(σ*ζ))*exp(-((time-δ)*(time-δ))/(0.36*σ*σ))
             default: break
         }
@@ -138,14 +138,14 @@ class LaserExcitation : Codable {
 
     /// Compute the rate of variation of the temperatures in K/s
     private func rhs(time: Double, temperatures: Temperatures) -> Temperatures {
-        let Cep: Double = self.ttm.coupling!.electronPhonon
-        let Ces: Double = self.ttm.coupling!.electronSpin
-        let Cps: Double = self.ttm.coupling!.phononSpin
-        let γ: Double = self.ttm.heatCapacity!.electron // Ce=gamma*Te
-        let Cp: Double = self.ttm.heatCapacity!.phonon
-        let Cs: Double = self.ttm.heatCapacity!.spin
-        let τ_ls: Double = self.ttm.damping
-        let T_ref: Double = self.ttm.initialTemperature
+        let Cep: Double = ttm.coupling!.electronPhonon
+        let Ces: Double = ttm.coupling!.electronSpin
+        let Cps: Double = ttm.coupling!.phononSpin
+        let γ: Double = ttm.heatCapacity!.electron // Ce=gamma*Te
+        let Cp: Double = ttm.heatCapacity!.phonon
+        let Cs: Double = ttm.heatCapacity!.spin
+        let τ_ls: Double = ttm.damping
+        let T_ref: Double = ttm.initialTemperature
 
         let Te : Double = temperatures.electron
         let Tp : Double = temperatures.phonon
@@ -164,21 +164,21 @@ class LaserExcitation : Codable {
     }
 
     /// Integration method of the 3 temperatures model for a Gaussian pulse
-    func advanceTemperaturesGaussian(method:String, Δt : Double)  {
-          switch method.lowercased() {
+    func advanceTemperaturesGaussian(Δt: Double, by: String)  {
+          switch by.lowercased() {
             /// Euler or Runge-Kutta of order 1
             case "euler", "rk1":
-                self.temperatures += Δt*rhs(time:self.time,temperatures:self.temperatures)
+                temperatures += Δt*rhs(time: time, temperatures: temperatures)
             /// Runge-Kutta of order 2
             case "rk2":
-                let k1: Temperatures = self.temperatures + 0.5*Δt*rhs(time:self.time,temperatures:self.temperatures)
-                self.temperatures += Δt*rhs(time:self.time+0.5*Δt,temperatures:k1)
+                let k1: Temperatures = temperatures + 0.5*Δt*rhs(time: time, temperatures: temperatures)
+                temperatures += Δt * rhs(time: time+0.5*Δt, temperatures: k1)
             /// Runge-Kutta of order 4
             case "rk4":
-                let k1: Temperatures = rhs(time:self.time,temperatures:self.temperatures)
-                let k2: Temperatures = rhs(time:self.time+0.5*Δt,temperatures:self.temperatures+0.5*Δt*k1)
-                let k3: Temperatures = rhs(time:self.time+0.5*Δt,temperatures:self.temperatures+0.5*Δt*k2)
-                let k4: Temperatures = rhs(time:self.time+Δt,temperatures:self.temperatures+Δt*k3)
+                let k1: Temperatures = rhs(time:time, temperatures: temperatures)
+                let k2: Temperatures = rhs(time:time+0.5*Δt, temperatures: temperatures+0.5*Δt*k1)
+                let k3: Temperatures = rhs(time:time+0.5*Δt, temperatures: temperatures+0.5*Δt*k2)
+                let k4: Temperatures = rhs(time:time+Δt, temperatures: temperatures+Δt*k3)
                 self.temperatures += (Δt/6)*(k1+2*k2+2*k3+k4)
             default: break
             }   
@@ -186,7 +186,7 @@ class LaserExcitation : Codable {
 
     /// Estimation of the integration timestep needed for a given constant quality factor 0<Q<1
     func estimateTimestep(factor: Double) -> Double {
-        let temp: LaserExcitation.Temperatures = rhs(time: self.time, temperatures: self.temperatures)
+        let temp: LaserExcitation.Temperatures = rhs(time: time, temperatures: temperatures)
         let array: [Double] = [abs(temp.electron), abs(temp.phonon), abs(temp.spin)]
         return factor/(array.max()!)
     }

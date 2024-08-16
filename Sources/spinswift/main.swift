@@ -44,7 +44,7 @@ let laser: LaserExcitation = LaserExcitation(temperatures: .init(electron: ttm.i
 
 for _ in 0...30000 {
     let timestep: Double = laser.estimateTimestep(factor:0.8)
-    laser.advanceTemperaturesGaussian(method:"rk4",Δt:timestep)
+    laser.advanceTemperaturesGaussian(Δt: timestep, by: "rk4")
     laser.time += timestep
-    print(String(format:"%e %f %f %f",laser.time,laser.temperatures.electron,laser.temperatures.phonon,laser.temperatures.spin))
+    print(String(format:"%e %f %f %f", laser.time, laser.temperatures.electron, laser.temperatures.phonon, laser.temperatures.spin))
 }

@@ -18,7 +18,7 @@ class Integrate: Codable {
         self.h = h
     }
 
-    func evolve (stop: Double, Δt: Double, by: String? = nil, file: String) {
+    func evolve(stop: Double, Δt: Double, by: String? = nil, file: String) {
         switch by?.lowercased(){
         case "euler"? :
         self.evolveEuler(stop: stop, Δt: Δt, fileName: file)

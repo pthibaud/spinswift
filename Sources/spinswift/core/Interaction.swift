@@ -69,7 +69,7 @@ class Interaction : Codable {
             $0.ω += (value*($0.spin × $0.ω))
             $0.ω = coeff * ($0.ω)
         }
-        self.isDamping = Interaction.Damping(computed:true,α:value)
+        isDamping = Interaction.Damping(computed: true, α:value)
         return self
     }
 
@@ -78,7 +78,7 @@ class Interaction : Codable {
         atoms.forEach {
             $0.ω -= Vector3(nx*($0.spin.x), ny*($0.spin.y), nz*($0.spin.z))
         }
-        self.isDemagnetizing = Interaction.Demagnetizing(computed: true, n: [nx,ny,nz])
+        isDemagnetizing = Interaction.Demagnetizing(computed: true, n: [nx,ny,nz])
         return self
     }
 
@@ -98,7 +98,7 @@ class Interaction : Codable {
         atoms.forEach {
             $0.ω += coeff*($0.spin°axis)*axis
         }
-        self.isUniaxial = Interaction.Uniaxial(computed: true, axis: axis, value: value)
+        isUniaxial = Interaction.Uniaxial(computed: true, axis: axis, value: value)
         return self
     }
     
@@ -107,7 +107,7 @@ class Interaction : Codable {
         atoms.forEach {
             $0.ω += coeff*axis
         }
-        self.isZeeman = Interaction.Zeeman(computed: true, axis: axis, value: value)
+        isZeeman = Interaction.Zeeman(computed: true, axis: axis, value: value)
         return self
     }
 
@@ -115,9 +115,9 @@ class Interaction : Codable {
         //erase the effective fields first
         atoms.forEach {$0.ω = Vector3(0,0,0)}
         //If the fields have been computed, then update them with the proper set of values
-        if (isZeeman.computed) {self.zeemanField(isZeeman.axis,value:isZeeman.value)}
-        if (isUniaxial.computed) {self.uniaxialField(isUniaxial.axis,value:isUniaxial.value)}
-        if (isDamping.computed) {self.dampening(isDamping.α)}
+        if (isZeeman.computed) {zeemanField(isZeeman.axis,value:isZeeman.value)}
+        if (isUniaxial.computed) {uniaxialField(isUniaxial.axis,value:isUniaxial.value)}
+        if (isDamping.computed) {dampening(isDamping.α)}
     }
 
     func update(i: Int) {  
