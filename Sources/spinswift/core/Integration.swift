@@ -18,50 +18,96 @@ class Integrate: Codable {
         self.h = h
     }
 
-    func evolve(stop: Double, Δt: Double, by: String? = nil, file: String) {
+    func evolve(_ iterations: Int, Δt: Double, by: String? = nil, file: String) {
         switch by?.lowercased(){
         case "euler"? :
-        self.evolveEuler(stop: stop, Δt: Δt, fileName: file)
+        self.evolveEuler(iterations: iterations, Δt: Δt, fileName: file)
         case "expls"? :
-        self.evolveExpLs(stop: stop, Δt: Δt, fileName: file)
+        self.evolveExpLs(iterations: iterations, Δt: Δt, fileName: file)
         case "symplectic"? :
-        self.evolveSymplectic(stop: stop, Δt: Δt, fileName: file)
+        self.evolveSymplectic(iterations: iterations, Δt: Δt, fileName: file)
         default: break
         }
     }
 
-    func evolveEuler(stop: Double, Δt: Double, fileName: String) {
+    private func evolveEuler(iterations: Int, Δt: Double, fileName: String) {
         var time: Double = 0.0
         var content: String = String()
 
-        while (time < stop) {
+        for _ in 1...iterations {
             content += String(time)
+
             for a: Atom in h.atoms {
-                content += " "+String(a.spin.x)+" "+String(a.spin.y)+" "+String(a.spin.z)
-                a.advanceSpin(Δt: Δt, by: "euler")
+               content += " "+String(a.spin.x)+" "+String(a.spin.y)+" "+String(a.spin.z)
             }
+
+            DispatchQueue.concurrentPerform(iterations: h.atoms.count) { (index: Int) in
+                h.atoms[index].advanceSpin(Δt: Δt, by: "euler")
+            }
+
             content += "\n"
-            self.h.update()
-            time+=Δt
+            h.update()
+            time += Δt
         }
         //let home = FileManager.default.homeDirectoryForCurrentUser
         saveOnFile(data:content, fileName: fileName)
     }
 
-    func evolveExpLs(stop: Double, Δt: Double, fileName: String) {
+    private func evolveExpLs(iterations: Int, Δt: Double, fileName: String) {
+
+        var time: Double = 0.0
+        var content: String = String()
+
+        for _ in 1...iterations {
+            content += String(time)
+
+            for a: Atom in h.atoms {
+               content += " "+String(a.spin.x)+" "+String(a.spin.y)+" "+String(a.spin.z)
+               content += "\n"
+            }
+
+            expLs(Δt: Δt, by: "euler")
+
+            time += Δt
+        }
+        //let home = FileManager.default.homeDirectoryForCurrentUser
+        saveOnFile(data:content, fileName: fileName)
+
     }
 
-    func evolveSymplectic(stop: Double, Δt: Double, fileName: String) {
+    private func evolveSymplectic(iterations: Int, Δt: Double, fileName: String) {
+
+        var time: Double = 0.0
+        var content: String = String()
+
+        for _ in 1...iterations {
+            content += String(time)
+
+            for a: Atom in h.atoms {
+               content += " "+String(a.spin.x)+" "+String(a.spin.y)+" "+String(a.spin.z)
+               content += "\n"
+            }
+
+            expLs(Δt: Δt, by: "symplectic")
+
+            time += Δt
+        }
+        //let home = FileManager.default.homeDirectoryForCurrentUser
+        saveOnFile(data:content, fileName: fileName)
+
     }
 
-    func expLs(Δt: Double, by: String) {
+    private func expLs(Δt: Double, by: String) {
         let numberOfAtoms: Int = h.atoms.count
-        for i:Int in 0...(numberOfAtoms-2) {
+        for i: Int in 0...(numberOfAtoms-2) {
             h.atoms[i].advanceSpin(Δt: Δt/2, by: by)
+            h.update()
         }
         h.atoms[numberOfAtoms-1].advanceSpin(Δt: Δt, by: by)
+        h.update()
         for i: Int in 0...(numberOfAtoms-2) {
             h.atoms[numberOfAtoms-i-2].advanceSpin(Δt: Δt/2, by: by)
+            h.update()
         }
     }
 

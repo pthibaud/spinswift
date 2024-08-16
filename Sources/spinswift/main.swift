@@ -29,10 +29,8 @@ var h: Interaction = Interaction([MTJ[0],MTJ[2]])
 //.exchangeField(typeI:1,typeJ:1,value:1.0,Rcut:3)
 .dampening(0.1)
 
-//print(try! h.jsonify())
-let s: Integrate = Integrate(h)
-s.expLs(Δt:0.1, by:"euler")
-//print(try! h.atoms[0].jsonify())
+Integrate(h).evolve(10000, Δt: 1.0, by: "euler", file: "test")
+
 //print(Analysis(h.atoms).temperature())
 
 let pulse: LaserExcitation.Pulse = LaserExcitation.Pulse(form: "Gaussian", fluence: 10.0, duration: 60E-15, delay: 0)
@@ -42,9 +40,11 @@ let ttm: LaserExcitation.TTM = LaserExcitation.TTM(effectiveThickness: 1e-9, ini
 let laser: LaserExcitation = LaserExcitation(temperatures: .init(electron: ttm.initialTemperature, phonon: ttm.initialTemperature, spin: ttm.initialTemperature), pulse: pulse,ttm: ttm)
 //print(laser.power(time:laser.time))
 
+/*
 for _ in 0...30000 {
     let timestep: Double = laser.estimateTimestep(factor:0.8)
     laser.advanceTemperaturesGaussian(Δt: timestep, by: "rk4")
     laser.time += timestep
     print(String(format:"%e %f %f %f", laser.time, laser.temperatures.electron, laser.temperatures.phonon, laser.temperatures.spin))
 }
+*/
