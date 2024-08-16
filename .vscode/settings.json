@@ -1,3 +1,5 @@
 {
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "lldb.library": "/usr/libexec/swift/5.10.1/usr/lib/liblldb.so",
+    "lldb.launch.expressions": "native"
 }

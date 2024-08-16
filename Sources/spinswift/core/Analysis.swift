@@ -18,7 +18,7 @@ class Analysis {
     }
 
     /// Return the total energy of a magnetic system
-    func GetEnergy() -> Double {
+    func energy() -> Double {
         var e : Double = 0
         atoms.forEach {
             e += ($0.ω°$0.spin)
@@ -27,7 +27,7 @@ class Analysis {
     }
 
     /// Return the average magnetization vector of a magnetic system
-    func GetMagnetization() -> Vector3 {
+    func magnetization() -> Vector3 {
         var m : Vector3 = Vector3()
         var g : Double = 0
         atoms.forEach {
@@ -40,7 +40,7 @@ class Analysis {
     }
 
     /// Return the total torque of a magnetic system
-    func GetTorque() -> Vector3 {
+    func torque() -> Vector3 {
         var t: Vector3 = Vector3()
         atoms.forEach {
             t += ($0.ω)×($0.spin)
@@ -49,9 +49,9 @@ class Analysis {
     }
 
     /// Return the spin microcanonic temperature 
-    func GetTemperature(coefficient:Double? = 2.0) -> Double {
-        let e: Double = self.GetEnergy()
-        let t: Vector3 = self.GetTorque()
+    func temperature(coefficient: Double? = 2.0) -> Double {
+        let e: Double = self.energy()
+        let t: Vector3 = self.torque()
         let t2: Double = t°t
         let T: Double = (t2*(ℏ.value))/(e*coefficient!*(k_B.value))
         return T

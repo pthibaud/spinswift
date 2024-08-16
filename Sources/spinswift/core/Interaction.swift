@@ -63,7 +63,7 @@ class Interaction : Codable {
         }
     }
 
-    func Dampening(_ value: Double) -> Interaction {
+    func dampening(_ value: Double) -> Interaction {
         let coeff: Double = 1.0/(1.0+value*value)
         atoms.forEach {
             $0.ω += (value*($0.spin × $0.ω))
@@ -73,7 +73,7 @@ class Interaction : Codable {
         return self
     }
 
-    func DemagnetizingField(_ nx: Double, _ ny: Double , _ nz: Double) -> Interaction {
+    func demagnetizingField(_ nx: Double, _ ny: Double , _ nz: Double) -> Interaction {
         assert(nx+ny+nz == 1,"Demagnetizing: the sum of the coefficients should be 1")
         atoms.forEach {
             $0.ω -= Vector3(nx*($0.spin.x), ny*($0.spin.y), nz*($0.spin.z))
@@ -82,10 +82,10 @@ class Interaction : Codable {
         return self
     }
 
-    func ExchangeField(typeI: Int, typeJ: Int, value: Double, Rcut: Double? = Double()) -> Interaction {
+    func exchangeField(typeI: Int, typeJ: Int, value: Double, Rcut: Double? = Double()) -> Interaction {
         let NumberOfAtoms: Int = atoms.count
         for i: Int in 0...NumberOfAtoms-1 where atoms[i].type == typeI {
-           for j: Int in 0...i where atoms[j].type == typeJ && Distance(atoms[i].position, atoms[j].position)<=Rcut! && Distance(atoms[i].position, atoms[j].position)>0 {
+           for j: Int in 0...i where atoms[j].type == typeJ && distance(atoms[i].position, atoms[j].position)<=Rcut! && distance(atoms[i].position, atoms[j].position)>0 {
             atoms[i].ω += value*atoms[j].spin
             atoms[j].ω = atoms[i].ω
            }
@@ -93,8 +93,8 @@ class Interaction : Codable {
         return self
     }
 
-    func UniaxialField(_ axis: Vector3, value: Double) -> Interaction {
-        let coeff = value/(ℏ.value)
+    func uniaxialField(_ axis: Vector3, value: Double) -> Interaction {
+        let coeff: Double = value/(ℏ.value)
         atoms.forEach {
             $0.ω += coeff*($0.spin°axis)*axis
         }
@@ -102,8 +102,8 @@ class Interaction : Codable {
         return self
     }
     
-    func ZeemanField(_ axis: Vector3, value: Double) -> Interaction {
-        let coeff = (γ.value)*value
+    func zeemanField(_ axis: Vector3, value: Double) -> Interaction {
+        let coeff: Double = (γ.value)*value
         atoms.forEach {
             $0.ω += coeff*axis
         }
@@ -111,16 +111,16 @@ class Interaction : Codable {
         return self
     }
 
-    func Update() {
+    func update() {
         //erase the effective fields first
         atoms.forEach {$0.ω = Vector3(0,0,0)}
         //If the fields have been computed, then update them with the proper set of values
-        if (isZeeman.computed) {self.ZeemanField(isZeeman.axis,value:isZeeman.value)}
-        if (isUniaxial.computed) {self.UniaxialField(isUniaxial.axis,value:isUniaxial.value)}
-        if (isDamping.computed) {self.Dampening(isDamping.α)}
+        if (isZeeman.computed) {self.zeemanField(isZeeman.axis,value:isZeeman.value)}
+        if (isUniaxial.computed) {self.uniaxialField(isUniaxial.axis,value:isUniaxial.value)}
+        if (isDamping.computed) {self.dampening(isDamping.α)}
     }
 
-    func Update(i:Int) {  
+    func update(i: Int) {  
     }
 
     func jsonify() throws -> String {

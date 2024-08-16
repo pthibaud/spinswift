@@ -785,7 +785,7 @@ class PeriodicTable {
         return Z_int[key.capitalized] ?? -1
     } 
     
-    func Z_label(_ key:AnyHashable) -> String {
+    func ZLabel(_ key:AnyHashable) -> String {
         if let keyString:String = key as? String {
             return Z_short[String(keyString).capitalized] ?? "Unknown"
         }
@@ -794,7 +794,7 @@ class PeriodicTable {
         }
     }
     
-    func atomic_mass(_ key: String) -> Double {
+    func atomicMass(_ key: String) -> Double {
         return atomic_mass[Z(key)] ?? -1.0
     }
     

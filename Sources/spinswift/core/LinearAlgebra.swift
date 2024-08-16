@@ -23,7 +23,7 @@ public class Vector3 : Codable {
       self.y=y!
       self.z=z!
       switch normalize {
-         case true?: self.Normalize()
+         case true?: self.normalize()
          default: break}
       switch direction?.lowercased() {
         case "+x"?: self.x = 1 ; self.y = 0 ; self.z = 0
@@ -36,7 +36,7 @@ public class Vector3 : Codable {
           self.x=Double.random(in: -1...1)
           self.y=Double.random(in: -1...1)
           self.z=Double.random(in: -1...1)
-          self.Normalize()
+          self.normalize()
         default: break
     } 
   }
@@ -48,22 +48,18 @@ public class Vector3 : Codable {
   }
   
   /// Compute the norm of a 3D vector
-  func Norm() -> Double {
+  func norm() -> Double {
     return ((x*x) + (y*y) + (z*z)).squareRoot()
   }
 
   /// Normalize all the components of a 3D vector
-  func Normalize() {
-      let norm: Double = self.Norm()
+  func normalize() {
+      let norm: Double = self.norm()
       if norm != 0 {
       x/=norm
       y/=norm
       z/=norm
       }
-  }
-
-  func Print() {
-    print("<\(self.x),\(self.y),\(self.z)>")
   }
 
   /// Add two 3D vectors and return a 3D vector
@@ -116,6 +112,6 @@ public class Vector3 : Codable {
 }
 
 /// Compute the Euclidean distance between two 3D vectors
-public func Distance(_ a: Vector3, _ b: Vector3) -> Double {
+public func distance(_ a: Vector3, _ b: Vector3) -> Double {
     return ((a-b)°(a-b)).squareRoot()
 }

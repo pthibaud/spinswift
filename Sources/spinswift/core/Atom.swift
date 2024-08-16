@@ -57,9 +57,9 @@ class Atom : Codable {
 
         - Returns: The Cartesian vector pointing the new direction and located on the unit sphere
     */
-   func AdvanceSpin(method: String, Δt: Double) {
+    func advanceSpin(Δt: Double, by: String) {
         var s: Vector3 = Vector3()
-        switch method.lowercased() {
+        switch by.lowercased() {
         case "euler" :
             s = spin + Δt * (ω × spin)
         case "symplectic" :
@@ -70,7 +70,7 @@ class Atom : Codable {
             s1 += Δt * (ω × spin)
             s = c2 * (spin + s1)
         case "full" :
-            let n: Double = ω.Norm()
+            let n: Double = ω.norm()
             let Ω: Vector3 = (1.0/n)*ω
             let ξ: Double = n*Δt
             let χ: Double = Ω°spin
@@ -78,7 +78,7 @@ class Atom : Codable {
         default: break
         }
         spin = s
-        spin.Normalize()
+        spin.normalize()
     }
     
     func jsonify() throws -> String {
