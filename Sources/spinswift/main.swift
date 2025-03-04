@@ -49,16 +49,16 @@ Integrate(h).evolve(3000, Δt: 2.0, by: "symplectic", file: "symplectic")
 
 let pulse: LaserExcitation.Pulse = LaserExcitation.Pulse(form: "Gaussian", fluence: 10.0, duration: 60E-15, delay: 0)
 let Cp: LaserExcitation.TTM.HeatCapacity = LaserExcitation.TTM.HeatCapacity(electron:6E3, phonon:2.2E6, spin:2.2E6)
-let G: LaserExcitation.TTM.Coupling = LaserExcitation.TTM.Coupling(electronPhonon: 2.5E17)
+let G: LaserExcitation.TTM.Coupling = LaserExcitation.TTM.Coupling(electronPhonon: 2.5E17, electronSpin: 2.5E19, phononSpin: 2.5E20)
 let ttm: LaserExcitation.TTM = LaserExcitation.TTM(effectiveThickness: 1e-9, initialTemperature: 300, damping: 1E-12, heatCapacity: Cp, coupling: G)
 let laser: LaserExcitation = LaserExcitation(temperatures: .init(electron: ttm.initialTemperature, phonon: ttm.initialTemperature, spin: ttm.initialTemperature), pulse: pulse,ttm: ttm)
 //print(laser.power(time:laser.time))
 
-/*
+
 for _ in 0...30000 {
     let timestep: Double = laser.estimateTimestep(factor:0.8)
     laser.advanceTemperaturesGaussian(Δt: timestep, by: "rk4")
     laser.time += timestep
     print(String(format:"%e %f %f %f", laser.time, laser.temperatures.electron, laser.temperatures.phonon, laser.temperatures.spin))
 }
-*/
+
