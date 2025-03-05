@@ -100,3 +100,8 @@ fastlane/test_output
 
 iOSInjectionProject/
 docs
+
+.cache
+.swiftpm
+.bash_history
+Package.resolved
