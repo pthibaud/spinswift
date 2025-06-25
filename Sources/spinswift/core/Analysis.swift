@@ -1,9 +1,6 @@
 /*
 This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 */
-/*
-This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-*/
 
 class Analysis {
 
@@ -24,16 +21,13 @@ class Analysis {
         guard g != 0 else { return .zero }
         return (1.0 / g) * m
     }
-  
+
     func getMagnetizationLength() -> Double {
-        var mnorm: Double = 0
-        var g : Double = 0
-        atoms.forEach {
-            mnorm += (($0.g)*($0.moments.spin).Norm())
-            g += ($0.g)
-        }
-        guard g != 0 else {return 0}
-        return (1.0/g)*mnorm
+        let totalG = atoms.reduce(0) { $0 + $1.g }
+        guard totalG != 0 else { return 0 }
+
+        let mnorm = atoms.reduce(0) { $0 + $1.g * $1.moments.spin.norm() }
+        return mnorm / totalG
     }
 
     func getTorque() -> Vector3 {
@@ -49,32 +43,29 @@ class Analysis {
     }
 
     func getInstantEnergy() -> Double {
-        var e : Double = 0
-        atoms.forEach {
-            e += ($0.ω°$0.moments.spin)
-        }
-        return e
+        return atoms.reduce(0) { $0 + ($1.ω * $1.moments.spin) }
     }
 
-    func getSuceptibility() -> Matrix3 {
-        var χ: Matrix3 = Matrix3()
-        var N: Double = 0
-        atoms.forEach {
-            let A = ($0.moments.spin ⊗ $0.moments.spin)
-            χ += $0.moments.sigma - A  
-            N += 1
+    func getSusceptibility() -> Matrix3 {
+        let N = Double(atoms.count)
+        guard N != 0 else { return Matrix3() }
+
+        let χ = atoms.reduce(Matrix3()) { result, atom in
+            let A = atom.moments.spin ⊗ atom.moments.spin
+            return result + atom.moments.sigma - A
         }
-        χ=(1/N)*χ
-        return χ
+
+        return (1/N) * χ
     }
+
     func getCumulant() -> Matrix3 {
-        var Σ: Matrix3 = Matrix3()
-        var N: Double = 0
-        atoms.forEach {
-            Σ += $0.moments.sigma  
-            N += 1
+        let N = Double(atoms.count)
+        guard N != 0 else { return Matrix3() }
+
+        let Σ = atoms.reduce(Matrix3()) { result, atom in
+            return result + atom.moments.sigma
         }
-        Σ=(1/N)*Σ
-        return Σ
+
+        return (1/N) * Σ
     }
 }

@@ -6,7 +6,7 @@ typealias Magnetization = Atom
 
 typealias Stack = [Atom]
 
-//Strucutre to define initial parameters for an atom
+//Structure to define initial parameters for an atom
 struct InitialParam: Codable {
     var name: String
     var type: Int
@@ -33,7 +33,7 @@ struct InitialParam: Codable {
         }
 }
 
-// Strucutre to define boundary conditions
+// Structure to define boundary conditions
 struct BoundaryConditions: Codable {
     var BoxSize: Vector3
     var PBC: String
@@ -45,41 +45,51 @@ struct BoundaryConditions: Codable {
 }
 
 // Generate the crystal structures (change the initialization step)
-func GenerateCrystalStructure(UCAtoms: [Atom], supercell: (x: Int, y: Int, z: Int), LatticeConstant: Double, InitParam: InitialParam) -> [Atom] { 
+func generateCrystalStructure(unitCellAtoms: [Atom], supercell: (x: Int, y: Int, z: Int), latticeConstant: Double, initialParam: InitialParam) -> [Atom] {
+    let a = latticeConstant
     var crystalStructure: [Atom] = []
-    let a=LatticeConstant 
-    for i in 0..<supercell.x { 
-        for j in 0..<supercell.y { 
-            for k in 0..<supercell.z { 
-                let translationVector = Vector3(Double(i), Double(j), Double(k)) 
-                for atom in UCAtoms { 
-                    let newPosition = a*(atom.position + translationVector) 
-                    let newAtom = Atom(position: newPosition)
-            
-                    newAtom.name = InitParam.name; newAtom.type=InitParam.type; 
-                    newAtom.moments=InitParam.moments; newAtom.g=InitParam.g; newAtom.ℇ=InitParam.ℇ
-                    newAtom.Vat=InitParam.Vat; newAtom.Dref=InitParam.Dref; newAtom.vanHove=InitParam.vanHove
-            
+
+    for i in 0..<supercell.x {
+        for j in 0..<supercell.y {
+            for k in 0..<supercell.z {
+                let translationVector = Vector3(Double(i), Double(j), Double(k))
+                for atom in unitCellAtoms {
+                    let newPosition = a * (atom.position + translationVector)
+                    let newAtom = createAtom(position: newPosition, initialParam: initialParam)
                     crystalStructure.append(newAtom)
-                    } 
-    } } } 
-    return crystalStructure 
+                }
+            }
+        }
+    }
+
+    return crystalStructure
 }
 
+private func createAtom(position: Vector3, initialParam: InitialParam) -> Atom {
+    let newAtom = Atom(position: position)
+    newAtom.name = initialParam.name
+    newAtom.type = initialParam.type
+    newAtom.moments = initialParam.moments
+    newAtom.g = initialParam.g
+    newAtom.ℇ = initialParam.ℇ
+    newAtom.Vat = initialParam.Vat
+    newAtom.Dref = initialParam.Dref
+    newAtom.vanHove = initialParam.vanHove
+    return newAtom
+}
 
 func substituteRandomAtoms(structure: [Atom], InitParam: InitialParam, Percentage: Double) -> [Atom] {
     var Alloy: [Atom] = structure
     let N: Double = Percentage/100 // round it is better
     let Atomstosubstitute: Double = N*Double(Alloy.count)
-    var atomeindex: Int = 0 
+    var atomicIndex: Int = 0 
     let RandomAtoms = Array(0...Alloy.count-1).shuffled()
 
     for i in 0..<Int(Atomstosubstitute) {
-        atomeindex = RandomAtoms[i]
-        //print(String(atomeindex))
-        Alloy[atomeindex].name = InitParam.name; Alloy[atomeindex].type=InitParam.type; 
-        Alloy[atomeindex].moments=InitParam.moments; Alloy[atomeindex].g=InitParam.g; Alloy[atomeindex].ℇ=InitParam.ℇ
-        Alloy[atomeindex].Vat=InitParam.Vat; Alloy[atomeindex].Dref=InitParam.Dref; Alloy[atomeindex].vanHove=InitParam.vanHove
+        atomicIndex = RandomAtoms[i]
+        Alloy[atomicIndex].name = InitParam.name; Alloy[atomicIndex].type=InitParam.type; 
+        Alloy[atomicIndex].moments=InitParam.moments; Alloy[atomicIndex].g=InitParam.g; Alloy[atomicIndex].ℇ=InitParam.ℇ
+        Alloy[atomicIndex].Vat=InitParam.Vat; Alloy[atomicIndex].Dref=InitParam.Dref; Alloy[atomicIndex].vanHove=InitParam.vanHove
     }
 
     return Alloy
@@ -123,19 +133,20 @@ func substituteSpecificAtoms(structure: [Atom], InitParam: InitialParam, unitCel
 }
 
 //Calculate the inter-atomic distances with or without periodic boundary conditions
-func ComputeDistance(BCs: BoundaryConditions, atom1: Atom, atom2: Atom) -> Double {
-    var A: Double = 0.0
-    let BoxSize: Vector3 = BCs.BoxSize; let PBC: String = BCs.PBC
-    switch PBC.lowercased() {
-        case "off" :
-            A=Distance(atom1.position, atom2.position)  
-        case "on" :
-            let xij = atom1.position - atom2.position
-            xij.x -= BoxSize.x * (xij.x/BoxSize.x).rounded(.toNearestOrAwayFromZero)
-            xij.y -= BoxSize.y * (xij.y/BoxSize.y).rounded(.toNearestOrAwayFromZero)
-            xij.z -= BoxSize.z * (xij.z/BoxSize.z).rounded(.toNearestOrAwayFromZero)
-            A=((xij)°(xij)).squareRoot()
-        default: break
+func computeDistance(boundaryConditions: BoundaryConditions, atom1: Atom, atom2: Atom) -> Double {
+    let boxSize = boundaryConditions.boxSize
+    let pbc = boundaryConditions.pbc.lowercased()
+
+    switch pbc {
+    case "off":
+        return distance(atom1.position, atom2.position)
+    case "on":
+        var xij = atom1.position - atom2.position
+        xij.x -= boxSize.x * (xij.x / boxSize.x).rounded(.toNearestOrAwayFromZero)
+        xij.y -= boxSize.y * (xij.y / boxSize.y).rounded(.toNearestOrAwayFromZero)
+        xij.z -= boxSize.z * (xij.z / boxSize.z).rounded(.toNearestOrAwayFromZero)
+        return (xij ° xij).squareRoot()
+    default:
+        return 0.0
     }
-    return A
 }
