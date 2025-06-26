@@ -50,18 +50,21 @@ struct BoundaryConditions: Codable {
 
 // Generate the crystal structures (change the initialization step)
 func generateCrystalStructure(
-    unitCellAtoms: [Atom], supercell: (x: Int, y: Int, z: Int), latticeConstant: Double,
+    unitCellAtoms: [Atom], supercell: Vector3, latticeConstants: Vector3,
     initialParam: InitialParam
 ) -> [Atom] {
-    let a = latticeConstant
     var crystalStructure: [Atom] = []
 
-    for i in 0..<supercell.x {
-        for j in 0..<supercell.y {
-            for k in 0..<supercell.z {
+    for i in 0..<Int(supercell.x) {
+        for j in 0..<Int(supercell.y) {
+            for k in 0..<Int(supercell.z) {
                 let translationVector = Vector3(Double(i), Double(j), Double(k))
-                for atom in unitCellAtoms {
-                    let newPosition = a * (atom.position + translationVector)
+                unitCellAtoms.forEach { atom in
+                    let newPosition = Vector3(
+                        latticeConstants.x * (atom.position.x + translationVector.x),
+                        latticeConstants.y * (atom.position.y + translationVector.y),
+                        latticeConstants.z * (atom.position.z + translationVector.z)
+                    )
                     let newAtom = createAtom(position: newPosition, initialParam: initialParam)
                     crystalStructure.append(newAtom)
                 }
@@ -89,12 +92,11 @@ func substituteRandomAtoms(structure: [Atom], InitParam: InitialParam, Percentag
 {
     let Alloy: [Atom] = structure
     let N: Double = Percentage / 100  // round it is better
-    let Atomstosubstituted: Double = N * Double(Alloy.count)
-    var atomicIndex: Int = 0
+    let atomsSubstituted = N * Double(Alloy.count)
     let RandomAtoms = Array(0...Alloy.count - 1).shuffled()
 
-    for i in 0..<Int(Atomstosubstituted) {
-        atomicIndex = RandomAtoms[i]
+    for i in 0..<Int(atomsSubstituted) {
+        let atomicIndex = RandomAtoms[i]
         Alloy[atomicIndex].name = InitParam.name
         Alloy[atomicIndex].type = InitParam.type
         Alloy[atomicIndex].moments = InitParam.moments

@@ -34,7 +34,7 @@ class Interaction: Codable {
         var typeI: Int = Int()
         var typeJ: Int = Int()
         var value: Double = Double()
-        var Rcut: Double = Double()
+        var cutoffRadius: Double = Double()
         var BCs: BoundaryConditions = BoundaryConditions()
     }
     private struct DMI: Codable {
@@ -97,7 +97,9 @@ class Interaction: Codable {
         return self
     }
 
-    func exchangeField(typeI: Int, typeJ: Int, value: Double, Rcut: Double, BCs: BoundaryConditions)
+    func exchangeField(
+        typeI: Int, typeJ: Int, value: Double, cutoffRadius: Double, BCs: BoundaryConditions
+    )
         -> Interaction
     {
         let NumberOfAtoms = atoms.count
@@ -106,7 +108,7 @@ class Interaction: Codable {
             for j in 0..<NumberOfAtoms where atoms[j].type == typeJ && i != j {
                 let distance = computeDistance(
                     boundaryConditions: BCs, atom1: atoms[i], atom2: atoms[j])
-                if distance <= Rcut {
+                if distance <= cutoffRadius {
                     let F1 = atoms[i].g * μ_B.value
                     let F2 = atoms[j].g * μ_B.value
                     let R = (γ.value) * value
@@ -118,7 +120,8 @@ class Interaction: Codable {
         }
 
         self.isExchange = Interaction.Exchange(
-            computed: true, typeI: typeI, typeJ: typeJ, value: value, Rcut: Rcut, BCs: BCs)
+            computed: true, typeI: typeI, typeJ: typeJ, value: value, cutoffRadius: cutoffRadius,
+            BCs: BCs)
         return self
     }
 
@@ -159,7 +162,7 @@ class Interaction: Codable {
         if isExchange.computed {
             self.exchangeField(
                 typeI: isExchange.typeI, typeJ: isExchange.typeJ, value: isExchange.value,
-                Rcut: isExchange.Rcut, BCs: isExchange.BCs)
+                cutoffRadius: isExchange.cutoffRadius, BCs: isExchange.BCs)
         }
         if isUniaxial.computed { self.uniaxialField(isUniaxial.axis, value: isUniaxial.value) }
         if isDamping.computed { self.dampening(isDamping.α) }
