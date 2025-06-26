@@ -19,33 +19,40 @@ struct InitialParam: Codable {
     var Dref: Double
     var vanHove: Double
 
-    init(name: String, type: Int, spin: Vector3? = Vector3(), moments: Atom.Moments?, position: Vector3? = Vector3(), g: Double? = Double(), ℇ: Double? = Double(), Vat: Double? = Double(), Dref: Double? = Double(), vanHove: Double? = Double()) {
-            self.name = name
-            self.type = type
-            self.spin = spin!
-            self.moments = moments!
-            self.position = position!
-            self.g = g!
-            self.ℇ = ℇ!
-            self.Vat = Vat!
-            self.Dref = Dref!
-            self.vanHove = vanHove!
-        }
+    init(
+        name: String, type: Int, spin: Vector3? = Vector3(), moments: Atom.Moments?,
+        position: Vector3? = Vector3(), g: Double? = Double(), ℇ: Double? = Double(),
+        Vat: Double? = Double(), Dref: Double? = Double(), vanHove: Double? = Double()
+    ) {
+        self.name = name
+        self.type = type
+        self.spin = spin!
+        self.moments = moments!
+        self.position = position!
+        self.g = g!
+        self.ℇ = ℇ!
+        self.Vat = Vat!
+        self.Dref = Dref!
+        self.vanHove = vanHove!
+    }
 }
 
 // Structure to define boundary conditions
 struct BoundaryConditions: Codable {
-    var BoxSize: Vector3
-    var PBC: String
+    var boxSize: Vector3
+    var periodicity: String
 
-    init(BoxSize: Vector3? = Vector3(), PBC: String? = String()) {
-        self.BoxSize = BoxSize!
-        self.PBC = PBC!
+    init(boxSize: Vector3? = Vector3(), periodicity: String? = String()) {
+        self.boxSize = boxSize!
+        self.periodicity = periodicity!
     }
 }
 
 // Generate the crystal structures (change the initialization step)
-func generateCrystalStructure(unitCellAtoms: [Atom], supercell: (x: Int, y: Int, z: Int), latticeConstant: Double, initialParam: InitialParam) -> [Atom] {
+func generateCrystalStructure(
+    unitCellAtoms: [Atom], supercell: (x: Int, y: Int, z: Int), latticeConstant: Double,
+    initialParam: InitialParam
+) -> [Atom] {
     let a = latticeConstant
     var crystalStructure: [Atom] = []
 
@@ -78,28 +85,34 @@ private func createAtom(position: Vector3, initialParam: InitialParam) -> Atom {
     return newAtom
 }
 
-func substituteRandomAtoms(structure: [Atom], InitParam: InitialParam, Percentage: Double) -> [Atom] {
-    var Alloy: [Atom] = structure
-    let N: Double = Percentage/100 // round it is better
-    let Atomstosubstitute: Double = N*Double(Alloy.count)
-    var atomicIndex: Int = 0 
-    let RandomAtoms = Array(0...Alloy.count-1).shuffled()
+func substituteRandomAtoms(structure: [Atom], InitParam: InitialParam, Percentage: Double) -> [Atom]
+{
+    let Alloy: [Atom] = structure
+    let N: Double = Percentage / 100  // round it is better
+    let Atomstosubstituted: Double = N * Double(Alloy.count)
+    var atomicIndex: Int = 0
+    let RandomAtoms = Array(0...Alloy.count - 1).shuffled()
 
-    for i in 0..<Int(Atomstosubstitute) {
+    for i in 0..<Int(Atomstosubstituted) {
         atomicIndex = RandomAtoms[i]
-        Alloy[atomicIndex].name = InitParam.name; Alloy[atomicIndex].type=InitParam.type; 
-        Alloy[atomicIndex].moments=InitParam.moments; Alloy[atomicIndex].g=InitParam.g; Alloy[atomicIndex].ℇ=InitParam.ℇ
-        Alloy[atomicIndex].Vat=InitParam.Vat; Alloy[atomicIndex].Dref=InitParam.Dref; Alloy[atomicIndex].vanHove=InitParam.vanHove
+        Alloy[atomicIndex].name = InitParam.name
+        Alloy[atomicIndex].type = InitParam.type
+        Alloy[atomicIndex].moments = InitParam.moments
+        Alloy[atomicIndex].g = InitParam.g
+        Alloy[atomicIndex].ℇ = InitParam.ℇ
+        Alloy[atomicIndex].Vat = InitParam.Vat
+        Alloy[atomicIndex].Dref = InitParam.Dref
+        Alloy[atomicIndex].vanHove = InitParam.vanHove
     }
-
     return Alloy
-
 }
 
-
-func substituteSpecificAtoms(structure: [Atom], InitParam: InitialParam, unitCellAtoms: [Atom], supercellSize: (Int, Int, Int)) -> [Atom] {
+func substituteSpecificAtoms(
+    structure: [Atom], InitParam: InitialParam, unitCellAtoms: [Atom],
+    supercellSize: (Int, Int, Int)
+) -> [Atom] {
     // Create a deep copy of the original structure
-    var Alloy = structure
+    let Alloy = structure
 
     // Identify the reference atom in the unit cell (e.g., the one at (0,0,0))
     guard let referenceAtom = unitCellAtoms.first else {
@@ -110,9 +123,12 @@ func substituteSpecificAtoms(structure: [Atom], InitParam: InitialParam, unitCel
     // Function to check if an atom is a translation of the reference atom
     func isTranslation(of reference: Atom, atom: Atom, supercellSize: (Int, Int, Int)) -> Bool {
         let (sx, sy, sz) = supercellSize
-        return (atom.position.x - reference.position.x).truncatingRemainder(dividingBy: Double(sx)) == 0 &&
-               (atom.position.y - reference.position.y).truncatingRemainder(dividingBy: Double(sy)) == 0 &&
-               (atom.position.z - reference.position.z).truncatingRemainder(dividingBy: Double(sz)) == 0
+        return (atom.position.x - reference.position.x).truncatingRemainder(dividingBy: Double(sx))
+            == 0
+            && (atom.position.y - reference.position.y).truncatingRemainder(dividingBy: Double(sy))
+                == 0
+            && (atom.position.z - reference.position.z).truncatingRemainder(dividingBy: Double(sz))
+                == 0
     }
 
     // Perform substitution only on atoms that match the reference pattern
@@ -135,9 +151,9 @@ func substituteSpecificAtoms(structure: [Atom], InitParam: InitialParam, unitCel
 //Calculate the inter-atomic distances with or without periodic boundary conditions
 func computeDistance(boundaryConditions: BoundaryConditions, atom1: Atom, atom2: Atom) -> Double {
     let boxSize = boundaryConditions.boxSize
-    let pbc = boundaryConditions.pbc.lowercased()
+    let periodicity = boundaryConditions.periodicity.lowercased()
 
-    switch pbc {
+    switch periodicity {
     case "off":
         return distance(atom1.position, atom2.position)
     case "on":

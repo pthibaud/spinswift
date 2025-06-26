@@ -10,15 +10,15 @@ class Analysis {
         self.atoms = atoms ?? []
     }
 
-    func getEnergy() -> Double {
+    func getInstantEnergy() -> Double {
         return atoms.reduce(0) { $0 + ($1.ω ° $1.moments.spin) }
     }
 
     func getMagnetization() -> Vector3 {
-        let (m, g) = atoms.reduce((Vector3.zero, 0)) { (acc, atom) in
+        let (m, g) = atoms.reduce((Vector3(0, 0, 0), 0)) { (acc, atom) in
             return (acc.0 + (atom.g * atom.moments.spin), acc.1 + atom.g)
         }
-        guard g != 0 else { return .zero }
+        guard g != 0 else { return Vector3(0, 0, 0) }
         return (1.0 / g) * m
     }
 
@@ -31,19 +31,15 @@ class Analysis {
     }
 
     func getTorque() -> Vector3 {
-        return atoms.reduce(Vector3.zero) { $0 + ($1.ω × ($1.moments.spin)) }
+        return atoms.reduce(Vector3(0, 0, 0)) { $0 + ($1.ω × ($1.moments.spin)) }
     }
 
     func getTemperature(coefficient: Double? = nil) -> Double {
-        let e = self.getEnergy()
+        let e = self.getInstantEnergy()
         let t = self.getTorque()
         let t2 = t ° t
         let T = (t2 * ℏ.value) / (e * (coefficient ?? 2.0) * k_B.value)
         return T
-    }
-
-    func getInstantEnergy() -> Double {
-        return atoms.reduce(0) { $0 + ($1.ω * $1.moments.spin) }
     }
 
     func getSusceptibility() -> Matrix3 {
@@ -55,7 +51,7 @@ class Analysis {
             return result + atom.moments.sigma - A
         }
 
-        return (1/N) * χ
+        return (1 / N) * χ
     }
 
     func getCumulant() -> Matrix3 {
@@ -66,6 +62,6 @@ class Analysis {
             return result + atom.moments.sigma
         }
 
-        return (1/N) * Σ
+        return (1 / N) * Σ
     }
 }

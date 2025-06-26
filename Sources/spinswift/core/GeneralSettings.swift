@@ -3,7 +3,7 @@ This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 Inte
 */
 /// This class for managing The general settings of spinswift code
 /// All general settings regarding format, structure, color and generalities is done here
-/// - Author: Mouad Fattouhi 
+/// - Author: Mouad Fattouhi
 /// - Date: 01/08/2024
 /// - refactor : 25/06/2025 Pascal Thibaudeau
 /// - Version: 0.2
@@ -20,10 +20,5 @@ class GeneralSettings: Codable {
         case magenta = "\u{001B}[0;35m"
         case cyan = "\u{001B}[0;36m"
         case white = "\u{001B}[0;37m"
-    }
-
-    enum WriteFont: String {
-        case bold = ""
-        case italic = ""
     }
 }
