@@ -111,7 +111,7 @@ func substituteRandomAtoms(structure: [Atom], InitParam: InitialParam, Percentag
 
 func substituteSpecificAtoms(
     structure: [Atom], InitParam: InitialParam, unitCellAtoms: [Atom],
-    supercellSize: (Int, Int, Int)
+    supercellSize: Vector3
 ) -> [Atom] {
     // Create a deep copy of the original structure
     let Alloy = structure
@@ -123,13 +123,16 @@ func substituteSpecificAtoms(
     }
 
     // Function to check if an atom is a translation of the reference atom
-    func isTranslation(of reference: Atom, atom: Atom, supercellSize: (Int, Int, Int)) -> Bool {
-        let (sx, sy, sz) = supercellSize
-        return (atom.position.x - reference.position.x).truncatingRemainder(dividingBy: Double(sx))
+    func isTranslation(of reference: Atom, atom: Atom, supercellSize: Vector3) -> Bool {
+
+        return (atom.position.x - reference.position.x).truncatingRemainder(
+            dividingBy: supercellSize.x)
             == 0
-            && (atom.position.y - reference.position.y).truncatingRemainder(dividingBy: Double(sy))
+            && (atom.position.y - reference.position.y).truncatingRemainder(
+                dividingBy: supercellSize.y)
                 == 0
-            && (atom.position.z - reference.position.z).truncatingRemainder(dividingBy: Double(sz))
+            && (atom.position.z - reference.position.z).truncatingRemainder(
+                dividingBy: supercellSize.z)
                 == 0
     }
 
