@@ -104,4 +104,6 @@ fastlane/test_output
 
 iOSInjectionProject/
 jobswift.pbs
+Package.resolved
+
 
